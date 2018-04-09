@@ -43,7 +43,3 @@ A signed tx, created with sign_tx()
 
 ###### private_key:
 A users private_key used to SIGN a transaction
-
-
-
-##### make_tx():
