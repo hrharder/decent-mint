@@ -23,8 +23,8 @@ THESE ARE PRIVATE
 #########
 '''
 
-app_id = '81338ad5'
-app_key = '48f2d6c4134621cff764ae2b48d9ab27'
+app_id = ''
+app_key = ''
 
 
 '''

@@ -62,17 +62,8 @@ class NetworkBroadcastLayer():
 		else:
 			return False
 
-	def get_prepared_tx(self, tx_id):
-		return self.prep_tx_dict['unsigned_tx']
-
-	def get_signed_tx(self, tx_id):
-		return self.signed_tx_dict['signed_tx']['id']
-
 	def get_sent_tx(self, tx_id):
 		return self.sent_tx_dict['sent_tx']['id']
-
-	def get_failed_tx(self, tx_id):
-		return self.failed_tx_dict['failed_tx']['id']
 
 class OrderBookReader():
 	'''
@@ -83,7 +74,7 @@ class OrderBookReader():
 	'''
 
 	def __init__(self):
-		self.endpoint = 'https://test.bigchaindb.com/api/v1/transactions'
+		self.endpoint = 'https://test.bigchaindb.com/api/v1/'
 		self.read_tx = {'read_tx':{}}
 
 	def print_full_asset(self, tx_id):
