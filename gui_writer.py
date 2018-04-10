@@ -8,7 +8,7 @@
 	@version 0.0.3
 	@version_date: 2 April 2018
 '''
-from nbl import* # NetworkBroadcastLayer 
+from ntl import* # NetworkBroadcastLayer 
 from tkinter import* # tkinter GUI python module
 import time
 import pyperclip as pyp
@@ -150,12 +150,12 @@ class OrderBookWriter(Frame):
 		self.vars['txid_var'].set(self.push_tx(app_info, order))
 
 	def push_tx(self, app_info, order):
-		self.broadcaster = NetworkBroadcastLayer(app_info['id'], app_info['key'])
-		signed_tx = self.broadcaster.sign_tx(self.broadcaster.make_tx(order['data'],
+		self.broadcaster = NetworkTransportLayer(app_info['id'], app_info['key'])
+		signed_tx = self.broadcaster.sign_order(self.broadcaster.make_singlesign_order(order['data'],
 			order['metadata'], self.keys['pub']), self.keys['priv'])
-		self.broadcaster.push_tx(signed_tx)
+		self.broadcaster.send_order(signed_tx)
 		pyp.copy(signed_tx['id'])
-		print(self.time_tx(signed_tx['id'], order['metadata']['timestamp']))
+		#print(self.time_tx(signed_tx['id'], order['metadata']['timestamp']))
 		return signed_tx['id']
 
 	def generate_keypair(self):
@@ -166,12 +166,12 @@ class OrderBookWriter(Frame):
 		self.keys['pub'] = pub
 		self.keys['priv'] = priv
 
-	def time_tx(self, tx_id, timestamp):
-		found_time = 0
-		while self.broadcaster.check_tx(tx_id) == False:
-				found_time = 0
-		found_time = time.time()
-		return (found_time-timestamp)
+	#def time_tx(self, tx_id, timestamp):
+	#	found_time = 0
+	#	while self.broadcaster.check_order(tx_id) == False:
+	#			found_time = 0
+	#	found_time = time.time()
+	#	return (found_time-timestamp)
 
 
 if __name__ == '__main__':

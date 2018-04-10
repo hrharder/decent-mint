@@ -81,6 +81,48 @@ class NetworkTransportLayer():
 
 		return self.chain.blocks.get(txid=tx_id)
 
+	def check_order(self, tx_id):
+		
+		if self.chain.transactions.status(tx_id)['status'] == 'valid':
+			return True
+		else:
+			return False
+
+
+
+class OrderBookReader():
+	'''
+	This method allows users to read the orderbook, by 
+	supplying only a TX_ID. It has the ability to print the
+	raw data, or return the full asset dictionary, or return
+	just the order data dict, or the metadata dict.
+	'''
+
+	def __init__(self):
+		self.endpoint = 'https://test2.bigchaindb.com/api/v1/transactions/'
+		self.read_tx = {'read_tx':{}}
+
+	def print_full_asset(self, tx_id):
+		load = requests.get(self.endpoint + tx_id)
+		print(load.text)
+
+	def get_full_asset(self, tx_id):
+		full_json = requests.get(self.endpoint + tx_id).json()
+		self.read_tx[full_json['id']] = full_json
+		return self.read_tx['read_tx'][full_json['id']]
+
+	def get_order_data(self, tx_id):
+		order_dict = requests.get(self.endpoint + tx_id).json()
+		return order_dict['asset']
+
+	def get_order_metadata(self, tx_id):
+		order_dict = requests.get(self.endpoint + tx_id).json()
+		return order_dict['metadata']
+
+	def get_all_read_tx(self):
+		return self.read_tx
+
+
 class KeypairGenerator():
 	'''
 	Only use this class to generate keypairs for 
