@@ -7,23 +7,23 @@
 
 	Written by Henry Harder
 
-	@version 0.1.4
-	@version_date: 9 April 2018
+	@version 0.1.5
+	@version_date: 11 April 2018
 '''
 from bigchaindb_driver import BigchainDB as bdb
 from bigchaindb_driver.crypto import generate_keypair as gen 
 import requests
 
 class NetworkTransportLayer():
-	def __init__(self, app_id, app_key, options=None):
-		self.tokens={
-			'app_id' : app_id,
-			'app_key' : app_key
-		}
+	def __init__(self, app_id, app_key): #, options=None):
+		self.tokens = {
+			'app_id':str(app_id),
+			'app_key':str(app_key)
+			}
 
-		self.chain = bdb('https://test2.bigchaindb.com', 
+		self.chain = bdb('https://test.bigchaindb.com', 
 			headers=self.tokens)
-		self.options = options
+		#self.options = options
 
 		self.log = {'u_ord_li' : [], # list of created orders
 					's_ord_li' : [], # list of signed orders
@@ -60,6 +60,9 @@ class NetworkTransportLayer():
 
 		self.log['s_ord_li'].append(signed_order)
 		return signed_order
+
+		#return self.chain.transactions.fulfill(order,
+		#	private_keys=private_key)
 
 	def send_order(self, signed_order):
 		'''
@@ -99,7 +102,7 @@ class OrderBookReader():
 	'''
 
 	def __init__(self):
-		self.endpoint = 'https://test2.bigchaindb.com/api/v1/transactions/'
+		self.endpoint = 'https://test.bigchaindb.com/api/v1/transactions/'
 		self.read_tx = {'read_tx':{}}
 
 	def print_full_asset(self, tx_id):
@@ -119,8 +122,8 @@ class OrderBookReader():
 		order_dict = requests.get(self.endpoint + tx_id).json()
 		return order_dict['metadata']
 
-	def get_all_read_tx(self):
-		return self.read_tx
+	#def get_all_read_tx(
+	#=	return self.read_tx
 
 
 class KeypairGenerator():

@@ -8,17 +8,24 @@
 	@version 0.0.2
 	@version_date: 2 April 2018
 '''
-from nbl import* # NetworkBroadcastLayer 
+from ntl import* # NetworkBroadcastLayer 
 from tkinter import* # tkinter GUI python module
 import time
 
 class OrderBookReader(Frame):
-	def __init__(self, mode):
+	def __init__(self):
 		self.parent = Tk()
 		Frame.__init__(self, self.parent)
 
 		self.app_frame = None
-		self.endpoint = 'https://test.bigchaindb.com/api/v1/transactions/?mode='
+
+		self.modes = {
+			1:'async',
+			2:'sync',
+			3:'commit'
+			}
+
+		self.endpoint = 'https://test.bigchaindb.com/api/v1/transactions?mode={}/' # must be formatted
 		self.read_tx = {'read_tx':{}}
 		self.vars = {'timestamp':StringVar(), 'dealmodel':StringVar(),
 					 'maker':StringVar(), 'field1':StringVar(), 'field2':
@@ -32,9 +39,6 @@ class OrderBookReader(Frame):
 			self.vars[i].set('No transaction loaded.')
 
 	def make_window(self):
-		var = {'timestamp':StringVar(), 'dealmodel':StringVar(),
-					 'maker':StringVar(), 'field1':StringVar(), 'field2':
-					 StringVar(), 'field3':StringVar()}
 		self.app_frame = Frame(self.parent)
 		output_frame = Frame(self.app_frame)
 		text_frame = Frame(output_frame)
@@ -71,19 +75,19 @@ class OrderBookReader(Frame):
 		d2_lb = Label(text_frame, text='data_field2:') # row 4
 		d3_lb = Label(text_frame, text='data_field3:') # row 5
 
-		time = Label(data_frame, textvariable=var['timestamp'])
-		dm = Label(data_frame, textvariable=var['dealmodel'])
-		mk = Label(data_frame, textvariable=var['maker'])
+		time = Label(data_frame, textvariable=self.vars['timestamp'])
+		dm = Label(data_frame, textvariable=self.vars['dealmodel'])
+		mk = Label(data_frame, textvariable=self.vars['maker'])
 
-		d1 = Label(data_frame, textvariable=var['field1'])
-		d2 = Label(data_frame, textvariable=var['field2'])
-		d3 = Label(data_frame, textvariable=var['field3'])
+		d1 = Label(data_frame, textvariable=self.vars['field1'])
+		d2 = Label(data_frame, textvariable=self.vars['field2'])
+		d3 = Label(data_frame, textvariable=self.vars['field3'])
 
 		txid_label = Label(output_frame, text = 'TXID: ') 
 		txid_input = Entry(output_frame)
 
 		go_btn = Button(output_frame, text='Load Data', command=lambda: 
-			self.get_order(txid_input.get(),var))
+			self.get_order(txid_input.get(),self.vars))
 
 		time_lb.grid(row=0, column=0, sticky=E)
 		dm_lb.grid(row=1, column=0, sticky=E)
@@ -110,14 +114,14 @@ class OrderBookReader(Frame):
 		self.app_frame.pack()
 		self.app_frame.mainloop()
 
-	def get_order(self, tx_id, var):
-		order_dict = requests.get(self.endpoint + tx_id).json()
-		var['timestamp'].set(order_dict['metadata']['timestamp'])
-		var['dealmodel'].set(order_dict['metadata']['dealmodel'])
-		var['maker'].set(order_dict['metadata']['maker'])
-		var['field1'].set(order_dict['asset']['data']['field1'])
-		var['field2'].set(order_dict['asset']['data']['field2'])
-		var['field3'].set(order_dict['asset']['data']['field3'])
+	def get_sync_order(self, mode, tx_id, var):
+		order_dict = requests.get(self.endpoint.format(mode) + tx_id).json()
+		self.vars['timestamp'].set(order_dict['metadata']['timestamp'])
+		self.vars['dealmodel'].set(order_dict['metadata']['dealmodel'])
+		self.vars['maker'].set(order_dict['metadata']['maker'])
+		self.vars['field1'].set(order_dict['asset']['data']['field1'])
+		self.vars['field2'].set(order_dict['asset']['data']['field2'])
+		self.vars['field3'].set(order_dict['asset']['data']['field3'])
 
 if __name__ == '__main__':
 	main = OrderBookReader()

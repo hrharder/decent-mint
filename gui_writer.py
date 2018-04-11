@@ -143,20 +143,22 @@ class OrderBookWriter(Frame):
 		app_info['key'] = appkey.get()
 		app_info['id'] = appid.get()
 		
-		order['data'] = {'data':{'field1':d1.get(), 'field2':d2.get(), 
-						'field3':d3.get()}}
-		order['metadata'] = {'timestamp':time.time(), 'dealmodel':dm.get(),
-							 'maker':mk.get()}
-		self.vars['txid_var'].set(self.push_tx(app_info, order))
+		order['asset'] = {'data':{'message':'SHOULDA BEEN POST'}}
+
+		order['metadata'] = {'metadata':{'timestamp':time.time(), 'dealmodel':dm.get(),
+							 'maker':mk.get()}}
+		response = self.push_tx(app_info, order)
+		self.vars['txid_var'].set(response)
 
 	def push_tx(self, app_info, order):
 		self.broadcaster = NetworkTransportLayer(app_info['id'], app_info['key'])
-		signed_tx = self.broadcaster.sign_order(self.broadcaster.make_singlesign_order(order['data'],
-			order['metadata'], self.keys['pub']), self.keys['priv'])
-		self.broadcaster.send_order(signed_tx)
-		pyp.copy(signed_tx['id'])
+		new_order = self.broadcaster.make_singlesign_order(order['asset'], order['metadata'], self.keys['pub'])
+
+		signed_tx = self.broadcaster.sign_order(new_order, self.keys['priv'])
+		sent_tx = self.broadcaster.send_order(signed_tx)
+		pyp.copy(sent_tx[0])
 		#print(self.time_tx(signed_tx['id'], order['metadata']['timestamp']))
-		return signed_tx['id']
+		return sent_tx[0]
 
 	def generate_keypair(self):
 		gen = KeypairGenerator()

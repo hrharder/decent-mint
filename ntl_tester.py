@@ -24,7 +24,7 @@ this is PRIVATE
 #########
 '''
 app_id = 'fd3fc431'
-app_key = 'f0ecbe406567c7f05507345643bb8e55'
+app_key = '13a76a6f7cacf18f9b3d775cf179dcf6'
 
 
 '''
@@ -34,7 +34,7 @@ END PRIVATE DATA
 '''
 
 
-order = {'data':{'message':'SHOULDA BEEN POST'}}
+order = {'data':{'message':'not really, hello'}}
 metadata = {'metadata':{'timestamp':time()}}
 
 # generate a random test keypair
@@ -46,7 +46,7 @@ broadcaster = NetworkTransportLayer(app_id, app_key)
 
 # create a transaction
 test_tx = broadcaster.make_singlesign_order(
-	order, metadata, alice.get_public_key()) 
+	order, alice.get_public_key()) 
 
 signed_tx = broadcaster.sign_order(test_tx, alice.get_private_key())
 
