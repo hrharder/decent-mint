@@ -15,7 +15,7 @@
 
 # import NetworkBroadcastLayer toolkit
 from ntl import*
-from time import time
+from time import*
 import pyperclip as pyp
 
 '''
@@ -35,7 +35,6 @@ END PRIVATE DATA
 
 
 order = {'data':{'message':'not really, hello'}}
-metadata = {'metadata':{'timestamp':time()}}
 
 # generate a random test keypair
 # in reality, real keys would be used
@@ -43,15 +42,18 @@ alice = KeypairGenerator()
 
 # create instance of NTL
 broadcaster = NetworkTransportLayer(app_id, app_key)
+reader = OrderBookReader()
 
 # create a transaction
 test_tx = broadcaster.make_singlesign_order(
-	order, alice.get_public_key()) 
+	order, {'timestamp':time()}, alice.get_public_key()) 
 
 signed_tx = broadcaster.sign_order(test_tx, alice.get_private_key())
-
+pyp.copy(signed_tx['id'])
 sent_order = broadcaster.send_order(signed_tx)
-
-print(sent_order[0])
-pyp.copy(sent_order[0])
+print('sent. timing.')
+delay = 0
+while (len(reader.get_full_asset(signed_tx['id']))==2):
+	delay += 1
+print(time()-reader.get_full_asset(signed_tx['id'])['metadata']['timestamp'])
 

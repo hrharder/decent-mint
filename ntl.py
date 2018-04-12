@@ -103,16 +103,9 @@ class OrderBookReader():
 
 	def __init__(self):
 		self.endpoint = 'https://test.bigchaindb.com/api/v1/transactions/'
-		self.read_tx = {'read_tx':{}}
-
-	def print_full_asset(self, tx_id):
-		load = requests.get(self.endpoint + tx_id)
-		print(load.text)
 
 	def get_full_asset(self, tx_id):
-		full_json = requests.get(self.endpoint + tx_id).json()
-		self.read_tx[full_json['id']] = full_json
-		return self.read_tx['read_tx'][full_json['id']]
+		return requests.get(self.endpoint + tx_id).json()
 
 	def get_order_data(self, tx_id):
 		order_dict = requests.get(self.endpoint + tx_id).json()
@@ -122,8 +115,9 @@ class OrderBookReader():
 		order_dict = requests.get(self.endpoint + tx_id).json()
 		return order_dict['metadata']
 
-	#def get_all_read_tx(
-	#=	return self.read_tx
+	def get_data_and_metadata(self, tx_id):
+		order_dict = requests.get(self.endpoint + tx_id).json()
+		return {'metadata':order_dict['metadata'], 'data':order_dict['asset']}
 
 
 class KeypairGenerator():

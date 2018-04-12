@@ -5,13 +5,14 @@
 
 	Written by Henry Harder
 
-	@version 0.0.3
-	@version_date: 2 April 2018
+	@version 0.0.4
+	@version_date: 11 April 2018
 '''
 from ntl import* # NetworkBroadcastLayer 
 from tkinter import* # tkinter GUI python module
 import time
 import pyperclip as pyp
+import requests
 
 class OrderBookWriter(Frame):
 	def __init__(self):
@@ -145,19 +146,20 @@ class OrderBookWriter(Frame):
 		
 		order['asset'] = {'data':{'message':'SHOULDA BEEN POST'}}
 
-		order['metadata'] = {'metadata':{'timestamp':time.time(), 'dealmodel':dm.get(),
-							 'maker':mk.get()}}
+		order['metadata'] = {'timestamp':None, 'dealmodel':dm.get(),
+							 'maker':mk.get()}
 		response = self.push_tx(app_info, order)
 		self.vars['txid_var'].set(response)
 
 	def push_tx(self, app_info, order):
 		self.broadcaster = NetworkTransportLayer(app_info['id'], app_info['key'])
+		order['metadata']['timestamp'] = time.time()
 		new_order = self.broadcaster.make_singlesign_order(order['asset'], order['metadata'], self.keys['pub'])
 
 		signed_tx = self.broadcaster.sign_order(new_order, self.keys['priv'])
 		sent_tx = self.broadcaster.send_order(signed_tx)
 		pyp.copy(sent_tx[0])
-		#print(self.time_tx(signed_tx['id'], order['metadata']['timestamp']))
+		print(self.time_tx(signed_tx['id'], order['metadata']['timestamp']))
 		return sent_tx[0]
 
 	def generate_keypair(self):
@@ -168,13 +170,11 @@ class OrderBookWriter(Frame):
 		self.keys['pub'] = pub
 		self.keys['priv'] = priv
 
-	#def time_tx(self, tx_id, timestamp):
-	#	found_time = 0
-	#	while self.broadcaster.check_order(tx_id) == False:
-	#			found_time = 0
-	#	found_time = time.time()
-	#	return (found_time-timestamp)
-
+	def time_tx(self, tx_id, timestamp):
+		reader = OrderBookReader()
+		while len(reader.get_full_asset(tx_id)) == 2:
+			pass
+		return time.time()-timestamp
 
 if __name__ == '__main__':
 	main = OrderBookWriter()
