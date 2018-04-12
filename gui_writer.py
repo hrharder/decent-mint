@@ -37,35 +37,6 @@ class OrderBookWriter(Frame):
 		input_frame = Frame(self.app_frame)
 		output_frame = Frame(self.app_frame)
 
-		self.app_frame.grid_rowconfigure(0) # input frame
-		self.app_frame.grid_rowconfigure(1) # input frame
-		self.app_frame.grid_rowconfigure(2) # input frame
-		self.app_frame.grid_rowconfigure(3)
-		self.app_frame.grid_rowconfigure(4)
-
-		self.app_frame.grid_columnconfigure(0) # only one column
-
-		input_frame.grid_columnconfigure(0) # label
-		input_frame.grid_columnconfigure(1) # entry
-
-		input_frame.grid_rowconfigure(0) # title
-		input_frame.grid_rowconfigure(1) # app_key input
-		input_frame.grid_rowconfigure(2) # app_id input
-		input_frame.grid_rowconfigure(3) # order data
-		input_frame.grid_rowconfigure(4) # order metadata
-		input_frame.grid_rowconfigure(5) # generate key pair
-		input_frame.grid_rowconfigure(6) # show key1
-		input_frame.grid_rowconfigure(7) # show key2
-		input_frame.grid_rowconfigure(8) # submit order
-		input_frame.grid_rowconfigure(9) # submit order
-		input_frame.grid_rowconfigure(10) # submit order
-		input_frame.grid_rowconfigure(11) # submit order
-		input_frame.grid_rowconfigure(12) # submit order
-
-		output_frame.grid_rowconfigure(0) # title
-		output_frame.grid_rowconfigure(1) # txid input
-		output_frame.grid_rowconfigure(2) # data output
-
 		self.vars['pub_var'].set("Click 'Generate' to make new public key")
 		self.vars['priv_var'].set("Click 'Generate' to make new private key")
 		self.vars['txid_var'].set('Submit an order to generate TX_ID')
@@ -144,7 +115,8 @@ class OrderBookWriter(Frame):
 		app_info['key'] = appkey.get()
 		app_info['id'] = appid.get()
 		
-		order['asset'] = {'data':{'message':'SHOULDA BEEN POST'}}
+		order['asset'] = {'data':{'field1':d1.get(), 'field2':d2.get(),
+						}}
 
 		order['metadata'] = {'timestamp':None, 'dealmodel':dm.get(),
 							 'maker':mk.get()}
@@ -173,6 +145,7 @@ class OrderBookWriter(Frame):
 	def time_tx(self, tx_id, timestamp):
 		reader = OrderBookReader()
 		while len(reader.get_full_asset(tx_id)) == 2:
+			print('Not found @ '+tiem.time())
 			pass
 		return time.time()-timestamp
 
