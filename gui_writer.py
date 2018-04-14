@@ -21,7 +21,9 @@ class OrderBookWriter(Frame):
 		
 		self.winfo_toplevel().title('NBL Order Book Tester')
 		self.broadcaster = None # network broadcaster
-		self.reader = OrderBookReader()
+		self.reader = OrderBookReader(
+			'https://test.bigchaindb.com/api/v1/transactions?mode=commit/'
+			)
 		self.app_frame = None # current top frame
 
 		self.widgets = {}
@@ -124,14 +126,17 @@ class OrderBookWriter(Frame):
 		self.vars['txid_var'].set(response)
 
 	def push_tx(self, app_info, order):
-		self.broadcaster = NetworkTransportLayer(app_info['id'], app_info['key'])
+		self.broadcaster = NetworkTransportLayer(
+			'https://test.bigchaindb.com',
+			app_info['id'],
+			app_info['key'])
 		order['metadata']['timestamp'] = time.time()
 		new_order = self.broadcaster.make_singlesign_order(order['asset'], order['metadata'], self.keys['pub'])
 
 		signed_tx = self.broadcaster.sign_order(new_order, self.keys['priv'])
 		sent_tx = self.broadcaster.send_order(signed_tx)
+		print(self.time_tx(signed_tx['id'], time.time(), order['metadata']['timestamp']))
 		pyp.copy(sent_tx[0])
-		print(self.time_tx(signed_tx['id'], order['metadata']['timestamp']))
 		return sent_tx[0]
 
 	def generate_keypair(self):
@@ -142,13 +147,13 @@ class OrderBookWriter(Frame):
 		self.keys['pub'] = pub
 		self.keys['priv'] = priv
 
-	def time_tx(self, tx_id, timestamp):
-		reader = OrderBookReader()
-		while len(reader.get_full_asset(tx_id)) == 2:
-			print('Not found @ '+tiem.time())
-			pass
-		return time.time()-timestamp
-
+	def time_tx(self, tx_id, start_time, timestamp):
+		while len(requests.get(
+			'https://test.bigchaindb.com/api/v1/transactions/'
+			+ tx_id).json()) == 2:
+		found_time = time.time()
+		return found_time-timestamp
+		
 if __name__ == '__main__':
 	main = OrderBookWriter()
 	main.mainloop()

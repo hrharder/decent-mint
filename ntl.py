@@ -1,29 +1,26 @@
 '''
-	#####################
-	NetworkBroadcastLayer 2.0
-	#####################
-
-	Updated to work with BigChain DB 2.0
-
+	###########################
+	NetworkBroadcastLayer Alpha
+	###########################
 	Written by Henry Harder
 
-	@version 0.1.5
-	@version_date: 11 April 2018
+	@version 0.1.6
+	@version_date: 13 April 2018
+
 '''
 from bigchaindb_driver import BigchainDB as bdb
 from bigchaindb_driver.crypto import generate_keypair as gen 
 import requests
 
 class NetworkTransportLayer():
-	def __init__(self, app_id, app_key): #, options=None):
+	def __init__(self, endpoint, app_id, app_key):
 		self.tokens = {
 			'app_id':str(app_id),
 			'app_key':str(app_key)
 			}
 
-		self.chain = bdb('https://test.bigchaindb.com', 
+		self.chain = bdb(endpoint, 
 			headers=self.tokens)
-		#self.options = options
 
 		self.log = {'u_ord_li' : [], # list of created orders
 					's_ord_li' : [], # list of signed orders
@@ -61,9 +58,6 @@ class NetworkTransportLayer():
 		self.log['s_ord_li'].append(signed_order)
 		return signed_order
 
-		#return self.chain.transactions.fulfill(order,
-		#	private_keys=private_key)
-
 	def send_order(self, signed_order):
 		'''
 		This method pushes ONE signed order to BigchainDB. 
@@ -84,15 +78,6 @@ class NetworkTransportLayer():
 
 		return self.chain.blocks.get(txid=tx_id)
 
-	def check_order(self, tx_id):
-		
-		if self.chain.transactions.status(tx_id)['status'] == 'valid':
-			return True
-		else:
-			return False
-
-
-
 class OrderBookReader():
 	'''
 	This method allows users to read the orderbook, by 
@@ -101,8 +86,8 @@ class OrderBookReader():
 	just the order data dict, or the metadata dict.
 	'''
 
-	def __init__(self):
-		self.endpoint = 'https://test.bigchaindb.com/api/v1/transactions/'
+	def __init__(self, endpoint):
+		self.endpoint = endpoint
 
 	def get_full_asset(self, tx_id):
 		return requests.get(self.endpoint + tx_id).json()
@@ -122,12 +107,9 @@ class OrderBookReader():
 
 class KeypairGenerator():
 	'''
-	Only use this class to generate keypairs for 
-	TESTING PURPOSES!!!
-
-	For real orders, actual public and private keypairs
-	should be used for preparing and signing all 
-	transactions.
+	Generates a BDB compliant BIP39/44 public/private key pair
+	that can be used to create, sign, and send orders to the
+	BigchainDB network.
 	'''
 
 	def __init__(self):
