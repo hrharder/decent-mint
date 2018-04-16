@@ -23,8 +23,8 @@ import pyperclip as pyp
 this is PRIVATE 
 #########
 '''
-app_id = 'fd3fc431'
-app_key = '13a76a6f7cacf18f9b3d775cf179dcf6'
+app_id = ''
+app_key = ''
 
 
 '''

@@ -18,19 +18,17 @@ class OrderBookWriter(Frame):
 	def __init__(self):
 		self.parent = Tk()
 		Frame.__init__(self, self.parent)
-		
 		self.winfo_toplevel().title('NBL Order Book Tester')
 		self.broadcaster = None # network broadcaster
-		self.reader = OrderBookReader(
-			'https://test.bigchaindb.com/api/v1/transactions?mode=commit/'
-			)
 		self.app_frame = None # current top frame
 
 		self.widgets = {}
 		self.keys = {}
-		self.vars = {'pub_var':StringVar(), 'priv_var':StringVar(),
-					'txid_var':StringVar(), 'out_var1':StringVar(),
-					'out_var2':StringVar()}
+		self.vars = {
+			'pub_var':StringVar(), 'priv_var':StringVar(),
+			'txid_var':StringVar(), 'out_var1':StringVar(),
+			'out_var2':StringVar()
+			}
 
 		self.make_window()
 
@@ -88,16 +86,16 @@ class OrderBookWriter(Frame):
 		app_id_label.grid(row=2, column=0, sticky=W)
 		app_id_input.grid(row=2, column=1, sticky=W)
 
-		dm_label.grid(row=3, column=0,sticky=W)
-		dm_input.grid(row=3, column=1,sticky=W)
-		mk_label.grid(row=4, column=0,sticky=W)
-		mk_input.grid(row=4, column=1,sticky=W)
-		d1_label.grid(row=5, column=0,sticky=W)
-		d1_input.grid(row=5, column=1,sticky=W)
-		d2_label.grid(row=6, column=0,sticky=W)
-		d2_input.grid(row=6, column=1,sticky=W)
-		d3_label.grid(row=7, column=0,sticky=W)
-		d3_input.grid(row=7, column=1,sticky=W)
+		dm_label.grid(row=3, column=0, sticky=W)
+		dm_input.grid(row=3, column=1, sticky=W)
+		mk_label.grid(row=4, column=0, sticky=W)
+		mk_input.grid(row=4, column=1, sticky=W)
+		d1_label.grid(row=5, column=0, sticky=W)
+		d1_input.grid(row=5, column=1, sticky=W)
+		d2_label.grid(row=6, column=0, sticky=W)
+		d2_input.grid(row=6, column=1, sticky=W)
+		d3_label.grid(row=7, column=0, sticky=W)
+		d3_input.grid(row=7, column=1, sticky=W)
 
 		keypair_generator.grid(row=8, column=0,sticky=W)
 		
@@ -131,9 +129,9 @@ class OrderBookWriter(Frame):
 			app_info['id'],
 			app_info['key'])
 		order['metadata']['timestamp'] = time.time()
-		new_order = self.broadcaster.make_singlesign_order(order['asset'], order['metadata'], self.keys['pub'])
+		new_order = self.broadcaster.make_solo_order(order['asset'], order['metadata'], self.keys['pub'])
 
-		signed_tx = self.broadcaster.sign_order(new_order, self.keys['priv'])
+		signed_tx = self.broadcaster.sign_solo_order(new_order, self.keys['priv'])
 		sent_tx = self.broadcaster.send_order(signed_tx)
 		print(self.time_tx(signed_tx['id'], time.time(), order['metadata']['timestamp']))
 		pyp.copy(sent_tx[0])

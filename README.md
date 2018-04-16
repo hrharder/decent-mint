@@ -1,45 +1,46 @@
 # NetworkTransportLayer Documentation
 
-This document contains a breif explanation of the NetworkBroadastLayer program (called NBL), and a description of how to use its methods to prepare and send propperly formatted orders.
+This document contains a brief explanation of the NetworkTransportLayer program (called NTL), and a description of how to use its methods to prepare and send properly formatted orders to a BigchainDB cluster.
 
-### NBL Methods:
+### Main NTL Methods:
 
-
-##### __init__(tokens, options):
+``` __init__(tokens, endpoint, options):```
 Initialize an instance to access the NetworkBroadcastLayer.
 
-###### tokens: 
-Provide app_ID and app_Key (BigchainDB API)
+-  __tokens__: 
+Provide app_ID and app_key (Authenticate BigchainDB API)
 
-###### options: 
+- __endpoint__:
+Specify the root URL of your BigchainDB cluster
+
+- __options__: 
 Not currently needed.
 
-##### make_tx(data, metadata, public_key):
-Create a raw transaction with supplied data and metadata, as well as a users public key (also known as an address).
-
-###### data: 
+``` make_singlesign_order(data, metadata, public_key):```
+Create a raw order with supplied data and metadata, as well as a users public key.
+- __data__: 
 A dictionary with main order data.
 
-###### metadata: 
+- __metadata__: 
 A dictionary with order metadata 
 
-###### public_key:
+- __public_key__:
 A users public_key (or address) used to creat a transaction
 
-##### sign_tx(raw_tx, private_key):
+```sign_order(raw_tx, private_key):```
 Sign a prepared raw transaction with a private key.
 
-###### raw_tx: 
+- __raw_tx__: 
 A prepared tx, created with make_tk()
 
-###### private_key:
+- __private_key__:
 A users private_key used to SIGN a transaction
 
-##### push_tx(signed_tx):
-Push a transaction to BigchainDB.
+```send_order(signed_order):```
+Push a signed order to BigchainDB.
 
-###### signed_tx: 
-A signed tx, created with sign_tx()
+- __signed_order__: 
+A signed order, as returned with sign_order()
 
-###### private_key:
+- __private_key__:
 A users private_key used to SIGN a transaction

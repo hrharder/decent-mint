@@ -15,25 +15,26 @@ import requests
 class NetworkTransportLayer():
 	def __init__(self, endpoint, app_id, app_key):
 		self.tokens = {
-			'app_id':str(app_id),
-			'app_key':str(app_key)
+			'app_id' : str(app_id),
+			'app_key' : str(app_key)
 			}
 
 		self.chain = bdb(endpoint, 
 			headers=self.tokens)
 
-		self.log = {'u_ord_li' : [], # list of created orders
+		self.log_dict = {'u_ord_li' : [], # list of created orders
 					's_ord_li' : [], # list of signed orders
 					'b_ord_dt' : {}} # dictionary of broadcasted orders,
 									 # with key TXID
 
-	def make_singlesign_order(self, raw_order, metadata, public_key):
+	def make_solo_order(self, raw_order, metadata, public_key):
 		'''
 		This method creates a json order ready to be signed and
 		broadcast to a BigchainDB cluster. It takes a PUBLIC KEY and
 		an ORDER dictionary, as well as relevant METADATA.
 
-		This method is for a single-signature order.
+		This method is for a single-signature order, for multiple, use
+		make_multi_order().
 		'''
 
 		new_order = self.chain.transactions.prepare(
@@ -42,20 +43,57 @@ class NetworkTransportLayer():
 			asset = raw_order,
 			metadata = metadata)
 
-		self.log['u_ord_li'].append(new_order)
+		self.log_dict['u_ord_li'].append(new_order)
 		return new_order
 
-	def sign_order(self, order, private_key):
+	def make_multi_order(self, raw_order, metadata, public_keys_tuple):
+		'''
+		This method creates a json order ready to be signed and
+		broadcast to a BigchainDB cluster. It takes a PUBLIC KEY TUPLE and
+		an ORDER dictionary, as well as relevant METADATA.
+
+		This method is for a multiple-signature order, so a tuple with
+		public keys should be provided. For single signature orders, use
+		make_solo_order().
+		'''
+
+		new_order = self.chain.transactions.prepare(
+			operation = 'CREATE',
+			signers = public_keys_tuple,
+			asset = raw_order,
+			metadata = metadata)
+
+		self.log_dict['u_ord_li'].append(new_order)
+		return new_order
+
+	def sign_solo_order(self, order, private_key):
 		'''
 		This method takes an ORDER created with make_singlesign_order()
 		or make_order(), along with a PRIVATE KEY, and returns 
 		a signed order, ready to be broadcast to BigchainDB.
+
+		If there is more than one signer, use .sign_multi_order()
 		'''
 
 		signed_order = self.chain.transactions.fulfill(
 			order, private_keys=private_key)
 
-		self.log['s_ord_li'].append(signed_order)
+		self.log_dict['s_ord_li'].append(signed_order)
+		return signed_order
+
+	def sign_multi_order(self, order, private_key_tuple):
+		'''
+		This method takes an ORDER created with make_multisig_order()
+		or make_order(), along with a PRIVATE KEY, and returns 
+		a signed order, ready to be broadcast to BigchainDB.
+
+		If there is only one signer, use .sign_solo_order()
+		'''
+
+		signed_order = self.chain.transactions.fulfill(
+			order, private_keys=private_key_tuple)
+
+		self.log_dict['s_ord_li'].append(signed_order)
 		return signed_order
 
 	def send_order(self, signed_order):
@@ -67,7 +105,7 @@ class NetworkTransportLayer():
 
 		sent_order = self.chain.transactions.send(signed_order)
 
-		self.log['b_ord_dt'][sent_order['id']] = sent_order
+		self.log_dict['b_ord_dt'][sent_order['id']] = sent_order
 		return (sent_order['id'], sent_order)
 
 	def get_order_height(self, tx_id):
@@ -110,6 +148,7 @@ class KeypairGenerator():
 	Generates a BDB compliant BIP39/44 public/private key pair
 	that can be used to create, sign, and send orders to the
 	BigchainDB network.
+
 	'''
 
 	def __init__(self):
