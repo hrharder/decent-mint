@@ -1,0 +1,21 @@
+{
+  "name": "paradigm",
+  "version": "0.0.1",
+  "description": "for my testing",
+  "main": "main.js",
+  "scripts": {
+    "test": "none"
+  },
+  "repository": {
+    "type": "git",
+    "url": "none"
+  },
+  "keywords": [
+    "none"
+  ],
+  "author": "Henry Harder",
+  "license": "MIT",
+  "dependencies": {
+    "bigchaindb-driver": "^4.0.0"
+  }
+}

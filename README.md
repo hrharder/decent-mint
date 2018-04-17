@@ -4,7 +4,7 @@ This document contains a brief explanation of the NetworkTransportLayer program 
 
 ### Main NTL Methods:
 
-``` __init__(tokens, endpoint, options):```
+```__init__(tokens, endpoint, options):```
 Initialize an instance to access the NetworkBroadcastLayer.
 
 -  __tokens__: 
@@ -16,7 +16,7 @@ Specify the root URL of your BigchainDB cluster
 - __options__: 
 Not currently needed.
 
-``` make_singlesign_order(data, metadata, public_key):```
+```make_singlesign_order(data, metadata, public_key):```
 Create a raw order with supplied data and metadata, as well as a users public key.
 - __data__: 
 A dictionary with main order data.
