@@ -1,8 +1,8 @@
  /*
-	NTL Tester Program (v0.1.2b)
+	NTL Tester Program (v0.1.3c)
 	NetworkTransportLayerJS 
 
-	@version-date: 17 April 2018
+	@version-date: 18 April 2018
 	@author: Henry R Harder
 
 	Written for Paradigm, 2018
@@ -12,9 +12,11 @@
 		creation and broadcast of a sample order to a BigchainDB cluster
 		specified in the constructor. You must fill in the 'app_id' and
 		'app_key' fields with actual BigchainDB credentials if you wish
-		to use the testnet. 
-*/
+		to use the testnet.
 
+		This script is designed to be run in a browser where the 
+		bigchain-db-js driver is already loaded. 
+*/
  class NetworkTransportLayer{
  	/*
 	This is the main NTL class that communicates with BigchainDB
@@ -24,25 +26,24 @@
 	*/
 
 	constructor(id, key, rootUrl){
-		this.driver = require('bigchaindb-driver');
-		this.connection = new this.driver.Connection(rootUrl, {
+		this.connection = new BigchainDB.Connection(rootUrl, {
 			app_id : id,
 			app_key : key
 		});
 	}
 
 	makeOrder(data, metadata, publicKey){
-		const newOrder = this.driver.Transaction.makeCreateTransaction(
+		const newOrder = BigchainDB.Transaction.makeCreateTransaction(
 			data, metadata,
-			[this.driver.Transaction.makeOutput(
-				this.driver.Transaction.makeEd25519Condition(publicKey))
+			[BigchainDB.Transaction.makeOutput(
+				BigchainDB.Transaction.makeEd25519Condition(publicKey))
 			], publicKey);
 
 		return newOrder;
 	}
 
 	signOrder(unsignedOrder, privateKey){
-		const signedOrder = this.driver.Transaction.signTransaction(
+		const signedOrder = BigchainDB.Transaction.signTransaction(
 			unsignedOrder, privateKey);
 
 		return signedOrder;
@@ -63,8 +64,7 @@ class KeyPairGenerator{
 	*/
 
 	constructor(){
-		this.driver = require('bigchaindb-driver');
-		this.pair = new this.driver.Ed25519Keypair();
+		this.pair = new BigchainDB.Ed25519Keypair();
 	}
 
 	getPublicKey(){
@@ -142,6 +142,5 @@ function submitOrder(){
 	signedOrder = testntl.signOrder(newOrder, alice.getPrivateKey());
 
 	orderID = testntl.sendOrder(signedOrder);
-
-	document.write(orderID);
+	window.alert(orderID);
 }

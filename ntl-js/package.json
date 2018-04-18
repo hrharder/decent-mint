@@ -1,21 +1,21 @@
 {
-  "name": "paradigm",
-  "version": "0.0.1",
-  "description": "for my testing",
+  "name": "ntl_js",
+  "version": "1.0.0",
+  "description": "d",
   "main": "main.js",
   "scripts": {
-    "test": "none"
+    "test": "d"
   },
   "repository": {
     "type": "git",
-    "url": "none"
+    "url": "d"
   },
   "keywords": [
-    "none"
+    "d"
   ],
-  "author": "Henry Harder",
+  "author": "d",
   "license": "MIT",
   "dependencies": {
-    "bigchaindb-driver": "^4.0.0"
+    "express": "^4.16.3"
   }
 }

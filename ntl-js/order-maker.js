@@ -1,3 +1,13 @@
+/*
+	OrderMakerJS (v0.0.1a)
+	NetworkTransportLayerJS 
+
+	@version-date: 17 April 2018
+	@author: Henry R Harder
+
+	Written for Paradigm, 2018
+*/
+
 export default class OrderMaker{
 	constructor(intList, addrList, maker){
 		this.orderData = {
