@@ -115,8 +115,8 @@ class OrderMaker{
 
 function submitOrder(){
 	testntl = new NetworkTransportLayer(
-	'fd3fc431',						// insert your credentials here to test
-	'13a76a6f7cacf18f9b3d775cf179dcf6',					// insert your credentials here to test
+	'', // insert your credentials here to test
+	'', // insert your credentials here to test
 	'https://test.bigchaindb.com/api/v1/',
 	 ); 
 
