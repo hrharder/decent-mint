@@ -1,8 +1,8 @@
  /*
-	NTL Tester Program (v0.1.3c)
+	NTL Tester Program (v0.1.4c)
 	NetworkTransportLayerJS 
 
-	@version-date: 18 April 2018
+	@version-date: 20 April 2018
 	@author: Henry R Harder
 
 	Written for Paradigm, 2018
@@ -17,6 +17,7 @@
 		This script is designed to be run in a browser where the 
 		bigchain-db-js driver is already loaded. 
 */
+
  class NetworkTransportLayer{
  	/*
 	This is the main NTL class that communicates with BigchainDB
@@ -84,23 +85,23 @@ class OrderMaker{
 	metadata ready for broadcast to BigchainDB
 	*/
 
-	constructor(intList, addrList, maker){
+	constructor(intList, addrList, maker, signature){
 		this.orderData = {
-			'order':{
+			"order":{
 				"maker" : [],
+				"sig" : signature,
 				"timestamp" : Math.floor(Date.now()/1000),
-				"fields" : {
+				"fields" : [
 					"intList" : intList,
 					"addrList" : addrList
-				}
+				]
 			}
 		};
+		
 		this.orderMetaData = {
-			"metadata":{
 				"filled" : false,
 				"valid" : true,
 				"updated" : Math.floor(Date.now()/1000)
-			}
 		};
 	}
 
@@ -115,10 +116,9 @@ class OrderMaker{
 
 function submitOrder(){
 	testntl = new NetworkTransportLayer(
-	'',	// insert your credentials here to test
-	'', // insert your credentials here to test
-	'https://test.bigchaindb.com/api/v1/',
-	 ); 
+	'fd3fc431',
+	'13a76a6f7cacf18f9b3d775cf179dcf6',
+	'https://test.bigchaindb.com/api/v1/'); 
 
 	var intList = [];
 	var addrList = [];
@@ -135,12 +135,14 @@ function submitOrder(){
 	order = new OrderMaker(
 		intList,
 		addrList,
-		alice.getPublicKey());
+		alice.getPublicKey(),
+		"not used in testing");
 
 	newOrder = testntl.makeOrder(order.getOrderData(), order.getOrderMetadata(), alice.getPublicKey());
 
 	signedOrder = testntl.signOrder(newOrder, alice.getPrivateKey());
 
 	orderID = testntl.sendOrder(signedOrder);
-	window.alert(orderID);
+
+	document.getElementById("outputTXID").innerHTML = "<h5>Order TX_ID:</h5>" + orderID;
 }

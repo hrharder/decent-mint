@@ -1,0 +1,21 @@
+{
+  "name": "ntl_js",
+  "version": "1.0.0",
+  "description": "d",
+  "main": "main.js",
+  "scripts": {
+    "test": "d"
+  },
+  "repository": {
+    "type": "git",
+    "url": "d"
+  },
+  "keywords": [
+    "d"
+  ],
+  "author": "d",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
