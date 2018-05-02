@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<title>Paradigm Reader</title>
+
+<!-- Latest bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<!-- Websocket Script -->
+<script language="javascript" type="text/javascript">
+// Original Script provided by BigchainDB documentation
+// Modified by Henry Harder for Paradigm
+
+var wsUri = "wss://test2.bigchaindb.com/api/v1/streams/valid_transactions";
+var output;
+var alertbox;
+
+function init()
+{
+        output = document.getElementById("output");
+        alertbox = document.getElementById("alert-box");
+        setWebSocket();
+}
+
+function setWebSocket()
+{
+        websocket = new WebSocket(wsUri);
+        websocket.onopen = function(evt) { onOpen(evt) };
+        websocket.onclose = function(evt) { onClose(evt) };
+        websocket.onmessage = function(evt) { onMessage(evt) };
+        websocket.onerror = function(evt) { onError(evt) };
+}
+
+function onOpen(evt)
+{
+        writeAlertMessage("Connected to Paradigm EventStreamAPI");
+}
+
+function onClose(evt)
+{
+        writeAlertMessage("Disconnected");
+}
+
+function   
+
+function onMessage(evt)
+{
+        writeToScreen('<a href="#" class="list-group-item"><h3 class="list-group-item-heading">Order</h3><p class="list-group-item-text">' + JSON.parse(evt.data). + '</p></a>');
+        console.log(evt.data);
+}
+
+
+function onError(evt)
+{
+        writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+}
+
+function closeConnection(evt)
+{
+        websocket.close()
+}
+
+function writeToScreen(message)
+{
+        var pre = document.createElement("p");
+        pre.style.wordWrap = "break-word";
+        pre.innerHTML = message;
+        output.appendChild(pre);
+}
+
+function writeAlertMessage(message)
+{
+        var alert = document.createElement("div");
+        alert.className = "alert alert-success";
+        alert.setAttribute("role", "alert");
+        alert.innerHTML = message;
+        alertbox.appendChild(alert);
+}
+
+f
+
+/* Initialize websocket and attach all events */
+window.addEventListener("load", init, false);
+
+/* Event called on closing browser or refreshing page to close connection */
+window.addEventListener("beforeunload", closeConnection, false);
+
+</script>
+
+<div class="container">
+        <h2>Paradigm WebSocket EventStream OrderAPI</h2>
+
+        <!-- Box for displaying all alerts -->
+        <div id="alert-box"></div>
+
+        <!-- Div for attachting all outputs -->
+        <div id="output" class="list-group"></div>
+</div>
