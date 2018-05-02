@@ -1,4 +1,4 @@
- /*
+/*
 	NTL Tester Program (v0.1.3c)
 	NetworkTransportLayerJS 
 
@@ -17,7 +17,8 @@
 		This script is designed to be run in a browser where the 
 		bigchain-db-js driver is already loaded. 
 */
- class NetworkTransportLayer{
+
+class NetworkTransportLayer{
  	/*
 	This is the main NTL class that communicates with BigchainDB
 	and facilitates the creation, signing, and broadcast of orders.
@@ -53,6 +54,10 @@
 		this.connection.postTransactionCommit(signedOrder);
 		return signedOrder.id;
 	}
+
+	cancelOrder(txid, publicKey, privateKey, signature){
+		dd
+	}
 }
 
 class KeyPairGenerator{
@@ -84,10 +89,11 @@ class OrderMaker{
 	metadata ready for broadcast to BigchainDB
 	*/
 
-	constructor(intList, addrList, maker){
+	constructor(intList, addrList, maker, signature){
 		this.orderData = {
 			'order':{
 				"maker" : [],
+				"sig" : signature;
 				"timestamp" : Math.floor(Date.now()/1000),
 				"fields" : {
 					"intList" : intList,
@@ -95,14 +101,13 @@ class OrderMaker{
 				}
 			}
 		};
+
 		this.orderMetaData = {
-			"metadata":{
-				"filled" : false,
-				"valid" : true,
-				"updated" : Math.floor(Date.now()/1000)
-			}
-		};
-	}
+			"filled" : false,
+			"valid" : true,
+			"updated" : Math.floor(Date.now()/1000)
+			};
+		}
 
 	getOrderData(){
 		return this.orderData;
@@ -115,9 +120,9 @@ class OrderMaker{
 
 function submitOrder(){
 	testntl = new NetworkTransportLayer(
-	'',	// insert your credentials here to test
-	'', // insert your credentials here to test
-	'https://test.bigchaindb.com/api/v1/',
+	'fd3fc431',	// insert your credentials here to test
+	'13a76a6f7cacf18f9b3d775cf179dcf6', // insert your credentials here to test
+	'https://test2.bigchaindb.com/api/v1/',
 	 ); 
 
 	var intList = [];
@@ -135,7 +140,8 @@ function submitOrder(){
 	order = new OrderMaker(
 		intList,
 		addrList,
-		alice.getPublicKey());
+		alice.getPublicKey(),
+		"not used in testing");
 
 	newOrder = testntl.makeOrder(order.getOrderData(), order.getOrderMetadata(), alice.getPublicKey());
 
